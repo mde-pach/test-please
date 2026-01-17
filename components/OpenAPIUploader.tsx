@@ -85,6 +85,7 @@ export default function OpenAPIUploader({ onSuccess }: OpenAPIUploaderProps) {
 
       // Store results in sessionStorage and navigate to results page
       sessionStorage.setItem('testResults', JSON.stringify({
+        collection: generateData.collection,
         testFiles: generateData.testFiles,
         apiInfo: parseData.apiInfo,
       }));

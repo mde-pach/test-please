@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateTestFiles } from '@/lib/test-generator';
+import { generateTestCollection } from '@/lib/collection-generator';
 import type { GenerateTestsRequest, GenerateTestsResponse } from '@/types';
 
 export const maxDuration = 300; // 5 minutes for test generation
@@ -28,18 +29,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate test files for all endpoints
+    // Generate structured test collection (new format)
+    const collection = await generateTestCollection(
+      body.endpoints,
+      body.apiInfo,
+      body.options
+    );
+
+    // Also generate code files for backward compatibility
     const testFiles = await generateTestFiles(
       body.endpoints,
       body.apiInfo,
       body.options
     );
 
-    if (testFiles.length === 0) {
+    if (collection.tests.length === 0) {
       return NextResponse.json<GenerateTestsResponse>(
         {
           success: false,
-          error: 'No test files were generated. Please check your OpenAPI specification.',
+          error: 'No tests were generated. Please check your OpenAPI specification.',
         },
         { status: 500 }
       );
@@ -47,6 +55,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json<GenerateTestsResponse>({
       success: true,
+      collection,
       testFiles,
     });
   } catch (error) {
@@ -55,7 +64,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json<GenerateTestsResponse>(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to generate test files',
+        error: error instanceof Error ? error.message : 'Failed to generate tests',
       },
       { status: 500 }
     );
