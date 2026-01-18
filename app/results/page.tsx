@@ -6,6 +6,7 @@ import Link from 'next/link';
 import TestPreview from '@/components/TestPreview';
 import DownloadButton from '@/components/DownloadButton';
 import TestCollectionView from '@/components/TestCollectionView';
+import { MigrationService } from '@/lib/storage/migration-service';
 import type { GeneratedTestFile, APIInfo, TestCollection } from '@/types';
 
 interface ResultsData {
@@ -18,6 +19,7 @@ export default function ResultsPage() {
   const router = useRouter();
   const [data, setData] = useState<ResultsData | null>(null);
   const [activeTab, setActiveTab] = useState<'runner' | 'code'>('runner');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     // Retrieve results from sessionStorage
@@ -50,6 +52,24 @@ export default function ResultsPage() {
     URL.revokeObjectURL(url);
   };
 
+  const handleSaveAsProject = async () => {
+    setIsSaving(true);
+    try {
+      const project = await MigrationService.migrateSessionStorageToProject();
+      if (project) {
+        // Navigate to projects list
+        router.push('/projects');
+      } else {
+        alert('Failed to save project: No data available');
+      }
+    } catch (error) {
+      console.error('Failed to save project:', error);
+      alert('Failed to save project. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   if (!data) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -70,12 +90,21 @@ export default function ResultsPage() {
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               API Test Suite
             </h1>
-            <Link
-              href="/"
-              className="px-4 py-2 text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-md transition-colors"
-            >
-              Generate New Tests
-            </Link>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={handleSaveAsProject}
+                disabled={isSaving}
+                className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-md transition-colors disabled:cursor-not-allowed"
+              >
+                {isSaving ? 'Saving...' : 'Save as Project'}
+              </button>
+              <Link
+                href="/"
+                className="px-4 py-2 text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-md transition-colors"
+              >
+                Generate New Tests
+              </Link>
+            </div>
           </div>
 
           {/* Tabs */}
