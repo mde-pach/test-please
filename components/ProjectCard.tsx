@@ -2,6 +2,9 @@
 
 import Link from 'next/link';
 import type { Project } from '@/types/project';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/Card';
+import Badge from '@/components/ui/Badge';
+import Button from '@/components/ui/Button';
 
 interface ProjectCardProps {
   project: Project;
@@ -36,21 +39,17 @@ export default function ProjectCard({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
-      {/* Card Header */}
-      <div className="p-6">
-        <div className="flex items-start justify-between mb-3">
-          <Link
-            href={`/projects/${project.id}`}
-            className="flex-1 group"
-          >
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <Link href={`/projects/${project.id}`} className="flex-1 group">
+            <CardTitle className="group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
               {project.name}
-            </h3>
+            </CardTitle>
           </Link>
           <button
             onClick={() => onToggleFavorite(project.id)}
-            className="ml-2 text-gray-400 hover:text-yellow-500 transition-colors"
+            className="ml-2 text-gray-400 hover:text-warning-500 transition-colors"
             aria-label="Toggle favorite"
           >
             <svg
@@ -68,13 +67,14 @@ export default function ProjectCard({
             </svg>
           </button>
         </div>
-
         {project.description && (
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
+          <CardDescription className="line-clamp-2 mt-2">
             {project.description}
-          </p>
+          </CardDescription>
         )}
+      </CardHeader>
 
+      <CardContent>
         {/* API Info */}
         <div className="space-y-2 mb-4">
           <div className="flex items-center text-sm">
@@ -89,7 +89,7 @@ export default function ProjectCard({
           {project.apiInfo.baseUrl && (
             <div className="flex items-center text-sm">
               <span className="text-gray-500 dark:text-gray-400">Base URL:</span>
-              <code className="ml-2 text-xs bg-gray-100 dark:bg-gray-900 px-2 py-0.5 rounded font-mono text-gray-700 dark:text-gray-300 truncate max-w-xs">
+              <code className="ml-2 text-xs bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded font-mono text-gray-700 dark:text-gray-300 truncate max-w-xs">
                 {project.apiInfo.baseUrl}
               </code>
             </div>
@@ -125,26 +125,21 @@ export default function ProjectCard({
 
         {/* Tags */}
         {project.metadata?.tags && project.metadata.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-4">
+          <div className="flex flex-wrap gap-1.5">
             {project.metadata.tags.map((tag, index) => (
-              <span
-                key={index}
-                className="px-2 py-0.5 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full"
-              >
+              <Badge key={index} variant="default" size="sm">
                 {tag}
-              </span>
+              </Badge>
             ))}
           </div>
         )}
-      </div>
+      </CardContent>
 
-      {/* Card Footer */}
-      <div className="border-t border-gray-200 dark:border-gray-700 px-6 py-3 bg-gray-50 dark:bg-gray-900/50 flex items-center justify-between">
-        <Link
-          href={`/projects/${project.id}`}
-          className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-        >
-          Open Project →
+      <CardFooter className="border-t border-gray-200 dark:border-gray-700 px-6 py-3 bg-gray-50 dark:bg-gray-900/50 justify-between">
+        <Link href={`/projects/${project.id}`}>
+          <Button variant="ghost" size="sm">
+            Open Project →
+          </Button>
         </Link>
 
         <div className="flex items-center space-x-2">
@@ -166,7 +161,7 @@ export default function ProjectCard({
 
           <button
             onClick={() => onDelete(project.id)}
-            className="p-1.5 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors"
+            className="p-1.5 text-danger-600 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300 hover:bg-danger-100 dark:hover:bg-danger-900/30 rounded transition-colors"
             aria-label="Delete project"
             title="Delete project"
           >
@@ -180,7 +175,7 @@ export default function ProjectCard({
             </svg>
           </button>
         </div>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 }

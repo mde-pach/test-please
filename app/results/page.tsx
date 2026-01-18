@@ -8,6 +8,9 @@ import DownloadButton from '@/components/DownloadButton';
 import TestCollectionView from '@/components/TestCollectionView';
 import { MigrationService } from '@/lib/storage/migration-service';
 import type { GeneratedTestFile, APIInfo, TestCollection } from '@/types';
+import { Card } from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
+import Spinner from '@/components/ui/Spinner';
 
 interface ResultsData {
   testFiles?: GeneratedTestFile[];
@@ -74,7 +77,7 @@ export default function ResultsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <Spinner size="lg" className="mx-auto mb-4" />
           <p className="text-gray-600 dark:text-gray-400">Loading results...</p>
         </div>
       </div>
@@ -91,18 +94,19 @@ export default function ResultsPage() {
               API Test Suite
             </h1>
             <div className="flex items-center space-x-3">
-              <button
+              <Button
                 onClick={handleSaveAsProject}
                 disabled={isSaving}
-                className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-md transition-colors disabled:cursor-not-allowed"
+                loading={isSaving}
+                variant="primary"
+                size="md"
               >
                 {isSaving ? 'Saving...' : 'Save as Project'}
-              </button>
-              <Link
-                href="/"
-                className="px-4 py-2 text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-md transition-colors"
-              >
-                Generate New Tests
+              </Button>
+              <Link href="/">
+                <Button variant="secondary" size="md">
+                  Generate New Tests
+                </Button>
               </Link>
             </div>
           </div>
@@ -142,7 +146,7 @@ export default function ResultsPage() {
         {/* Code View */}
         {activeTab === 'code' && data.testFiles && data.apiInfo && (
           <div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+            <Card className="p-6 mb-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 {data.apiInfo.title} (v{data.apiInfo.version})
               </h2>
@@ -175,7 +179,7 @@ export default function ResultsPage() {
 
                 <DownloadButton testFiles={data.testFiles} />
               </div>
-            </div>
+            </Card>
 
             {/* Test Files */}
             <div className="space-y-4">
@@ -193,21 +197,21 @@ export default function ResultsPage() {
             </div>
 
             {/* Instructions */}
-            <div className="mt-12 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-3">
+            <Card className="mt-12 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 p-6">
+              <h3 className="text-lg font-semibold text-primary-900 dark:text-primary-100 mb-3">
                 How to Use These Test Files
               </h3>
-              <ol className="list-decimal list-inside space-y-2 text-blue-800 dark:text-blue-200 text-sm">
+              <ol className="list-decimal list-inside space-y-2 text-primary-800 dark:text-primary-200 text-sm">
                 <li>Download the test files using the buttons above</li>
                 <li>Add them to your project&apos;s test directory</li>
-                <li>Install dependencies: <code className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded">npm install -D vitest axios</code></li>
+                <li>Install dependencies: <code className="bg-primary-100 dark:bg-primary-900 px-2 py-1 rounded">npm install -D vitest axios</code></li>
                 <li>Update the BASE_URL in each test file to point to your API</li>
-                <li>Run tests: <code className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded">npx vitest</code></li>
+                <li>Run tests: <code className="bg-primary-100 dark:bg-primary-900 px-2 py-1 rounded">npx vitest</code></li>
               </ol>
-              <p className="mt-4 text-sm text-blue-700 dark:text-blue-300">
+              <p className="mt-4 text-sm text-primary-700 dark:text-primary-300">
                 Note: You can run tests directly in the browser using the &quot;Test Runner&quot; tab above!
               </p>
-            </div>
+            </Card>
           </div>
         )}
 

@@ -10,6 +10,8 @@ import TestFilterPanel from '@/components/TestFilterPanel';
 import TestGroupView from '@/components/TestGroupView';
 import ExecutionHistoryView from '@/components/ExecutionHistoryView';
 import ProjectSettings from '@/components/ProjectSettings';
+import Button from '@/components/ui/Button';
+import Spinner from '@/components/ui/Spinner';
 
 type Tab = 'tests' | 'history' | 'settings';
 
@@ -149,7 +151,7 @@ export default function ProjectDetailPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <Spinner size="lg" className="mx-auto mb-4" />
           <p className="text-gray-600 dark:text-gray-400">Loading project...</p>
         </div>
       </div>
@@ -161,7 +163,7 @@ export default function ProjectDetailPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <svg
-            className="mx-auto h-12 w-12 text-red-400"
+            className="mx-auto h-12 w-12 text-danger-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -180,11 +182,10 @@ export default function ProjectDetailPage() {
             The project you&apos;re looking for doesn&apos;t exist or has been deleted.
           </p>
           <div className="mt-6">
-            <Link
-              href="/projects"
-              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-            >
-              Back to Projects
+            <Link href="/projects">
+              <Button variant="primary" size="md">
+                Back to Projects
+              </Button>
             </Link>
           </div>
         </div>
@@ -238,12 +239,13 @@ export default function ProjectDetailPage() {
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <button
+              <Button
                 onClick={handleExportProject}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                variant="secondary"
+                size="md"
               >
                 Export
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -255,7 +257,7 @@ export default function ProjectDetailPage() {
               onClick={() => setActiveTab('tests')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'tests'
-                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
               }`}
             >
@@ -265,7 +267,7 @@ export default function ProjectDetailPage() {
               onClick={() => setActiveTab('history')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'history'
-                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
               }`}
             >
@@ -275,7 +277,7 @@ export default function ProjectDetailPage() {
               onClick={() => setActiveTab('settings')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'settings'
-                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
               }`}
             >

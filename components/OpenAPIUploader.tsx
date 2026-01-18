@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { ParsedEndpoint, APIInfo } from '@/types';
+import { Card } from '@/components/ui/Card';
+import Input from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
 
 type TabType = 'url' | 'file';
 
@@ -117,7 +120,7 @@ export default function OpenAPIUploader({ onSuccess }: OpenAPIUploaderProps) {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
+    <Card className="w-full max-w-2xl mx-auto p-8">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
         Upload OpenAPI Specification
       </h2>
@@ -150,19 +153,13 @@ export default function OpenAPIUploader({ onSuccess }: OpenAPIUploaderProps) {
       <form onSubmit={handleSubmit}>
         {activeTab === 'url' ? (
           <div className="mb-6">
-            <label
-              htmlFor="url"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-            >
-              OpenAPI Specification URL
-            </label>
-            <input
+            <Input
               type="url"
               id="url"
+              label="OpenAPI Specification URL"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://example.com/openapi.json"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
               disabled={loading}
             />
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
@@ -177,7 +174,7 @@ export default function OpenAPIUploader({ onSuccess }: OpenAPIUploaderProps) {
             >
               OpenAPI Specification File
             </label>
-            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-500 dark:hover:border-blue-400 transition-colors">
+            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-primary-500 dark:hover:border-primary-400 transition-colors">
               <input
                 type="file"
                 id="file"
@@ -209,7 +206,7 @@ export default function OpenAPIUploader({ onSuccess }: OpenAPIUploaderProps) {
                   </span>
                 ) : (
                   <>
-                    <span className="text-blue-600 dark:text-blue-400 font-medium">
+                    <span className="text-primary-600 dark:text-primary-400 font-medium">
                       Click to upload
                     </span>
                     <span className="text-gray-500 dark:text-gray-400 text-sm mt-1">
@@ -224,45 +221,23 @@ export default function OpenAPIUploader({ onSuccess }: OpenAPIUploaderProps) {
 
         {/* Error message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
-            <p className="text-red-800 dark:text-red-200 text-sm">{error}</p>
+          <div className="mb-6 p-4 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-md">
+            <p className="text-danger-800 dark:text-danger-200 text-sm">{error}</p>
           </div>
         )}
 
         {/* Submit button */}
-        <button
+        <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-3 px-6 rounded-md transition-colors duration-200 disabled:cursor-not-allowed"
+          loading={loading}
+          variant="primary"
+          size="lg"
+          className="w-full"
         >
-          {loading ? (
-            <span className="flex items-center justify-center">
-              <svg
-                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-              Generating tests...
-            </span>
-          ) : (
-            'Generate Tests'
-          )}
-        </button>
+          {loading ? 'Generating tests...' : 'Generate Tests'}
+        </Button>
       </form>
-    </div>
+    </Card>
   );
 }

@@ -5,6 +5,10 @@ import type { APITest, TestExecution } from '@/types/test-format';
 import type { Project } from '@/types/project';
 import { TestRunner } from '@/lib/test-runner';
 import StoryTestRunner from './StoryTestRunner';
+import { Card } from '@/components/ui/Card';
+import Badge from '@/components/ui/Badge';
+import Button from '@/components/ui/Button';
+import Modal from '@/components/ui/Modal';
 
 interface TestGroupViewProps {
   tests: APITest[];
@@ -86,26 +90,26 @@ export default function TestGroupView({ tests, groupBy, project, onRefresh }: Te
     const result = executionResults.get(testId);
     if (runningTests.has(testId)) {
       return (
-        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600"></div>
       );
     }
     if (!result) return null;
 
     if (result.status === 'passed') {
       return (
-        <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="h-5 w-5 text-success-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
         </svg>
       );
     } else if (result.status === 'failed') {
       return (
-        <svg className="h-5 w-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="h-5 w-5 text-danger-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
         </svg>
       );
     } else {
       return (
-        <svg className="h-5 w-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="h-5 w-5 text-warning-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
       );
@@ -116,7 +120,7 @@ export default function TestGroupView({ tests, groupBy, project, onRefresh }: Te
 
   if (tests.length === 0) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-12 text-center border border-gray-200 dark:border-gray-700">
+      <Card className="p-12 text-center">
         <svg
           className="mx-auto h-12 w-12 text-gray-400"
           fill="none"
@@ -134,7 +138,7 @@ export default function TestGroupView({ tests, groupBy, project, onRefresh }: Te
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           Try adjusting your filters or create new tests
         </p>
-      </div>
+      </Card>
     );
   }
 
@@ -146,7 +150,7 @@ export default function TestGroupView({ tests, groupBy, project, onRefresh }: Te
           const isExpanded = groupBy === 'none' || expandedGroups.has(group.name);
 
           return (
-            <div key={group.name} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <Card key={group.name} className="overflow-hidden p-0">
               {/* Group Header */}
               {groupBy !== 'none' && (
                 <button
@@ -194,17 +198,16 @@ export default function TestGroupView({ tests, groupBy, project, onRefresh }: Te
                                 </p>
                               )}
                               <div className="mt-2 flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
-                                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                                  test.category === 'contract'
-                                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                                    : 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-                                }`}>
+                                <Badge
+                                  variant={test.category === 'contract' ? 'default' : 'info'}
+                                  size="sm"
+                                >
                                   {test.category}
-                                </span>
+                                </Badge>
                                 <span>{test.request.method}</span>
                                 <span className="truncate">{test.request.url}</span>
                                 {test.steps && test.steps.length > 0 && (
-                                  <span className="inline-flex items-center text-purple-600 dark:text-purple-400">
+                                  <span className="inline-flex items-center text-info-600 dark:text-info-400">
                                     <svg className="h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                                     </svg>
@@ -216,45 +219,39 @@ export default function TestGroupView({ tests, groupBy, project, onRefresh }: Te
                           </div>
                         </div>
                         <div className="ml-4 flex-shrink-0">
-                          <button
+                          <Button
                             onClick={() => executeTest(test)}
                             disabled={runningTests.has(test.id)}
-                            className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            loading={runningTests.has(test.id)}
+                            variant="secondary"
+                            size="sm"
                           >
                             {runningTests.has(test.id) ? 'Running...' : 'Run Test'}
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
-            </div>
+            </Card>
           );
         })}
       </div>
 
       {/* Test Execution Details Modal */}
       {selectedTest && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-            {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Test Execution Results
-              </h3>
-              <button
-                onClick={() => setSelectedTest(null)}
-                className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
-              >
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Modal Content */}
-            <div className="flex-1 overflow-y-auto p-6">
+        <Modal
+          isOpen={true}
+          onClose={() => setSelectedTest(null)}
+          size="xl"
+        >
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Test Execution Results
+            </h3>
+          </div>
+          <div className="p-6">
               {selectedTest.test.category === 'story' && selectedTest.test.steps ? (
                 <StoryTestRunner
                   test={selectedTest.test}
@@ -265,15 +262,18 @@ export default function TestGroupView({ tests, groupBy, project, onRefresh }: Te
                   {/* Status */}
                   <div>
                     <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</h4>
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                      selectedTest.execution.status === 'passed'
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                        : selectedTest.execution.status === 'failed'
-                        ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                        : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                    }`}>
+                    <Badge
+                      variant={
+                        selectedTest.execution.status === 'passed'
+                          ? 'success'
+                          : selectedTest.execution.status === 'failed'
+                          ? 'danger'
+                          : 'warning'
+                      }
+                      size="md"
+                    >
                       {selectedTest.execution.status.toUpperCase()}
-                    </span>
+                    </Badge>
                     <span className="ml-4 text-sm text-gray-500 dark:text-gray-400">
                       {selectedTest.execution.duration}ms
                     </span>
@@ -306,17 +306,17 @@ export default function TestGroupView({ tests, groupBy, project, onRefresh }: Te
                           key={index}
                           className={`p-3 rounded-lg ${
                             result.passed
-                              ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
-                              : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+                              ? 'bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800'
+                              : 'bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800'
                           }`}
                         >
                           <div className="flex items-start">
                             {result.passed ? (
-                              <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="h-5 w-5 text-success-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                               </svg>
                             ) : (
-                              <svg className="h-5 w-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="h-5 w-5 text-danger-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                               </svg>
                             )}
@@ -338,8 +338,8 @@ export default function TestGroupView({ tests, groupBy, project, onRefresh }: Te
                   {selectedTest.execution.error && (
                     <div>
                       <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Error</h4>
-                      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-lg">
-                        <p className="text-sm text-red-800 dark:text-red-200">
+                      <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 p-4 rounded-lg">
+                        <p className="text-sm text-danger-800 dark:text-danger-200">
                           {selectedTest.execution.error}
                         </p>
                       </div>
@@ -347,9 +347,8 @@ export default function TestGroupView({ tests, groupBy, project, onRefresh }: Te
                   )}
                 </div>
               )}
-            </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );
