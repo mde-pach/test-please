@@ -5,6 +5,7 @@ export interface APITest {
   name: string;
   description?: string;
   collectionId: string;
+  category: 'contract' | 'story'; // NEW: Test categorization
   request: {
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
     url: string;
@@ -15,13 +16,20 @@ export interface APITest {
       type: 'json' | 'form' | 'text' | 'none';
       data: any;
     };
+    variableSubstitution?: {
+      url?: string[]; // Variable names to substitute
+      headers?: Record<string, string>;
+      body?: Record<string, string>;
+    };
   };
   assertions: Assertion[];
   testType: 'success' | 'error' | 'validation' | 'edge-case';
+  steps?: TestStep[]; // NEW: Only for story tests (multi-step flows)
   metadata?: {
     createdAt: string;
     updatedAt: string;
     tags?: string[];
+    endpointPath?: string; // NEW: For grouping by endpoint
   };
 }
 
@@ -43,6 +51,8 @@ export interface TestCollection {
     baseUrl: string;
   };
   tests: APITest[];
+  projectId?: string; // NEW: Link to parent project
+  groups: TestGroup[]; // NEW: Hierarchical test organization
   createdAt: string;
   updatedAt: string;
 }
@@ -104,4 +114,55 @@ export interface CollectionExecutionResponse {
     duration: number;
   };
   error?: string;
+}
+
+// New interfaces for multi-step story tests and test organization
+
+export interface TestStep {
+  id: string;
+  name: string;
+  description?: string;
+  order: number;
+  request: {
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    url: string;
+    headers?: Record<string, string>;
+    queryParams?: Record<string, string>;
+    pathParams?: Record<string, string>;
+    body?: {
+      type: 'json' | 'form' | 'text' | 'none';
+      data: any;
+    };
+  };
+  assertions: Assertion[];
+  extractVariables?: VariableExtraction[];
+  dependencies?: string[]; // Step IDs this depends on
+}
+
+export interface VariableExtraction {
+  name: string; // e.g., "userId", "authToken"
+  source: 'header' | 'body' | 'jsonPath';
+  path?: string; // For jsonPath (e.g., "$.data.id")
+  headerName?: string;
+}
+
+export interface TestGroup {
+  id: string;
+  name: string;
+  type: 'endpoint' | 'category' | 'custom';
+  metadata: {
+    endpointPath?: string;
+    category?: 'contract' | 'story';
+    customTags?: string[];
+  };
+  testIds: string[];
+  parentGroupId?: string; // For nested groups
+}
+
+// Export APIInfo type for use in other modules
+export interface APIInfo {
+  title: string;
+  version: string;
+  description?: string;
+  baseUrl?: string;
 }

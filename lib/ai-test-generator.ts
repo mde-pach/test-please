@@ -152,6 +152,7 @@ function parseStructuredTestsFromResponse(
         name: test.name || 'Unnamed test',
         description: test.description,
         collectionId,
+        category: 'contract', // Default to contract tests
         request: {
           method: endpoint.method,
           url,
@@ -172,6 +173,7 @@ function parseStructuredTestsFromResponse(
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           tags: endpoint.tags || [],
+          endpointPath: endpoint.path, // Add endpoint path for grouping
         },
       } as APITest;
     });
@@ -186,6 +188,7 @@ function parseStructuredTestsFromResponse(
         name: `should test ${endpoint.method} ${endpoint.path}`,
         description: 'Auto-generated basic test case',
         collectionId,
+        category: 'contract',
         request: {
           method: endpoint.method,
           url: `${apiInfo.baseUrl || 'https://api.example.com'}${endpoint.path}`,
@@ -204,6 +207,7 @@ function parseStructuredTestsFromResponse(
         metadata: {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
+          endpointPath: endpoint.path,
         },
       } as APITest,
     ];

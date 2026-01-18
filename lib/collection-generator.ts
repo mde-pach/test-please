@@ -1,4 +1,4 @@
-import type { ParsedEndpoint, APIInfo, TestCollection, APITest } from '@/types';
+import type { ParsedEndpoint, APIInfo, TestCollection, APITest, TestGroup } from '@/types';
 import { generateStructuredTests } from './ai-test-generator';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -31,6 +31,9 @@ export async function generateTestCollection(
     }
   }
 
+  // Create groups for test organization
+  const groups = createTestGroups(allTests);
+
   return {
     id: collectionId,
     name: `${apiInfo.title} API Tests`,
@@ -41,7 +44,64 @@ export async function generateTestCollection(
       baseUrl: apiInfo.baseUrl || 'https://api.example.com',
     },
     tests: allTests,
+    groups,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
+}
+
+/**
+ * Create test groups for hierarchical organization
+ * Groups tests by endpoint and by category
+ */
+function createTestGroups(tests: APITest[]): TestGroup[] {
+  const groups: TestGroup[] = [];
+  const endpointMap = new Map<string, string[]>();
+  const categoryMap = new Map<string, string[]>();
+
+  // Group tests by endpoint and category
+  tests.forEach(test => {
+    const endpointPath = test.metadata?.endpointPath || test.request.url;
+    const category = test.category;
+
+    // Group by endpoint
+    if (!endpointMap.has(endpointPath)) {
+      endpointMap.set(endpointPath, []);
+    }
+    endpointMap.get(endpointPath)!.push(test.id);
+
+    // Group by category
+    if (!categoryMap.has(category)) {
+      categoryMap.set(category, []);
+    }
+    categoryMap.get(category)!.push(test.id);
+  });
+
+  // Create endpoint groups
+  endpointMap.forEach((testIds, endpointPath) => {
+    groups.push({
+      id: uuidv4(),
+      name: endpointPath,
+      type: 'endpoint',
+      metadata: {
+        endpointPath,
+      },
+      testIds,
+    });
+  });
+
+  // Create category groups
+  categoryMap.forEach((testIds, category) => {
+    groups.push({
+      id: uuidv4(),
+      name: `${category.charAt(0).toUpperCase() + category.slice(1)} Tests`,
+      type: 'category',
+      metadata: {
+        category: category as 'contract' | 'story',
+      },
+      testIds,
+    });
+  });
+
+  return groups;
 }
