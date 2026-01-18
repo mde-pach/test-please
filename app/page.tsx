@@ -1,95 +1,70 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import OpenAPIUploader from '@/components/OpenAPIUploader';
+import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/Card';
 
 export default function Home() {
-  const router = useRouter();
-
-  const handleLoadExample = () => {
-    // Get the current base URL dynamically
-    const baseUrl = window.location.origin;
-    const exampleUrl = `${baseUrl}/api/example/openapi.json`;
-
-    // Store in sessionStorage for OpenAPIUploader to pick up
-    sessionStorage.setItem('preloadUrl', exampleUrl);
-
-    // Reload page to trigger OpenAPIUploader
-    window.location.reload();
-  };
-
   return (
-    <main className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-950 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             OpenAPI Test Generator
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Automatically generate comprehensive TypeScript test cases from your OpenAPI specifications using AI
-          </p>
-        </div>
-
-        {/* Try Example Button */}
-        <div className="mb-8 text-center">
-          <button
-            onClick={handleLoadExample}
-            className="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-colors duration-200"
-          >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            Try Example Todo API
-          </button>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Load a pre-configured example to test the platform
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            Automatically generate comprehensive test cases from your OpenAPI specifications using AI.
+            Start by uploading a spec, or visit{' '}
+            <a href="/projects" className="text-primary-600 dark:text-primary-400 hover:underline font-medium">
+              Projects
+            </a>{' '}
+            to try our example.
           </p>
         </div>
 
         {/* Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-            <div className="text-blue-600 dark:text-blue-400 mb-3">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              AI-Powered
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm">
-              Uses Claude AI to generate intelligent test cases covering success, error, and edge cases
-            </p>
-          </div>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-primary-600 dark:text-primary-400 mb-3">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <CardTitle className="mb-2">AI-Powered</CardTitle>
+              <CardDescription>
+                Uses Claude AI to generate intelligent test cases covering success, error, and edge cases
+              </CardDescription>
+            </CardContent>
+          </Card>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-            <div className="text-blue-600 dark:text-blue-400 mb-3">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              Vitest Ready
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm">
-              Generates ready-to-run Vitest test files with proper assertions and error handling
-            </p>
-          </div>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-primary-600 dark:text-primary-400 mb-3">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <CardTitle className="mb-2">Vitest Ready</CardTitle>
+              <CardDescription>
+                Generates ready-to-run Vitest test files with proper assertions and error handling
+              </CardDescription>
+            </CardContent>
+          </Card>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-            <div className="text-blue-600 dark:text-blue-400 mb-3">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              Comprehensive Coverage
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm">
-              Validates request parameters, response schemas, status codes, and data types
-            </p>
-          </div>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="text-primary-600 dark:text-primary-400 mb-3">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                </svg>
+              </div>
+              <CardTitle className="mb-2">Comprehensive Coverage</CardTitle>
+              <CardDescription>
+                Validates request parameters, response schemas, status codes, and data types
+              </CardDescription>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Upload Component */}
@@ -104,7 +79,7 @@ export default function Home() {
             Example:{' '}
             <a
               href="https://petstore3.swagger.io/api/v3/openapi.json"
-              className="text-blue-600 dark:text-blue-400 hover:underline"
+              className="text-primary-600 dark:text-primary-400 hover:underline"
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -4,14 +4,19 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ProjectCard from '@/components/ProjectCard';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
+import Spinner from '@/components/ui/Spinner';
 import type { Project } from '@/types/project';
 import { getStorageService } from '@/lib/storage/storage-service';
+import { useCreateExampleProject } from '@/lib/hooks/useCreateExampleProject';
 
 export default function ProjectsPage() {
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const { createExampleProject, loading: creatingExample, error: createError } = useCreateExampleProject();
 
   useEffect(() => {
     loadProjects();
@@ -27,6 +32,14 @@ export default function ProjectsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCreateExample = async () => {
+    const project = await createExampleProject();
+    if (!project && createError) {
+      alert(`Failed to create example project: ${createError}`);
+    }
+    // Navigation happens inside the hook
   };
 
   const handleDelete = async (projectId: string) => {
@@ -98,7 +111,7 @@ export default function ProjectsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <Spinner size="lg" className="text-primary-600 mx-auto mb-4" />
           <p className="text-gray-600 dark:text-gray-400">Loading projects...</p>
         </div>
       </div>
@@ -106,51 +119,56 @@ export default function ProjectsPage() {
   }
 
   return (
-    <main className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-950 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
                 My Projects
               </h1>
               <p className="mt-2 text-gray-600 dark:text-gray-400">
                 Manage your API test projects and collections
               </p>
             </div>
-            <Link
-              href="/"
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-md"
-            >
-              Create New Project
-            </Link>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={handleCreateExample}
+                loading={creatingExample}
+                variant="success"
+                size="md"
+                leftIcon={
+                  !creatingExample && (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  )
+                }
+              >
+                Try Example
+              </Button>
+              <Link href="/">
+                <Button variant="primary" size="md">
+                  Create New Project
+                </Button>
+              </Link>
+            </div>
           </div>
 
           {/* Search */}
           {projects.length > 0 && (
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search projects..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <svg
-                className="absolute left-3 top-3.5 h-5 w-5 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </div>
+            <Input
+              type="text"
+              placeholder="Search projects..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              leftIcon={
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              }
+            />
           )}
         </div>
 
@@ -182,34 +200,43 @@ export default function ProjectsPage() {
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
+            <h3 className="mt-2 text-lg font-medium text-gray-900 dark:text-white">
               {searchQuery ? 'No projects found' : 'No projects yet'}
             </h3>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               {searchQuery
                 ? 'Try adjusting your search'
-                : 'Get started by creating a new project from an OpenAPI specification'}
+                : 'Get started by creating a new project or try our example'}
             </p>
             {!searchQuery && (
-              <div className="mt-6">
-                <Link
-                  href="/"
-                  className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              <div className="mt-6 flex gap-3 justify-center">
+                <Button
+                  onClick={handleCreateExample}
+                  loading={creatingExample}
+                  variant="success"
+                  size="md"
+                  leftIcon={
+                    !creatingExample && (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    )
+                  }
                 >
-                  <svg
-                    className="-ml-1 mr-2 h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                  Try Example API
+                </Button>
+                <Link href="/">
+                  <Button
+                    variant="primary"
+                    size="md"
+                    leftIcon={
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                    }
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 4v16m8-8H4"
-                    />
-                  </svg>
-                  Create New Project
+                    Create New Project
+                  </Button>
                 </Link>
               </div>
             )}
