@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { ParsedEndpoint, APIInfo } from '@/types';
 
@@ -17,6 +17,16 @@ export default function OpenAPIUploader({ onSuccess }: OpenAPIUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Check for preloaded URL from "Try Example" button
+  useEffect(() => {
+    const preloadUrl = sessionStorage.getItem('preloadUrl');
+    if (preloadUrl) {
+      setActiveTab('url');
+      setUrl(preloadUrl);
+      sessionStorage.removeItem('preloadUrl');
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

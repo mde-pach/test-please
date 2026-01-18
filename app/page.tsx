@@ -1,6 +1,23 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
 import OpenAPIUploader from '@/components/OpenAPIUploader';
 
 export default function Home() {
+  const router = useRouter();
+
+  const handleLoadExample = () => {
+    // Get the current base URL dynamically
+    const baseUrl = window.location.origin;
+    const exampleUrl = `${baseUrl}/api/example/openapi.json`;
+
+    // Store in sessionStorage for OpenAPIUploader to pick up
+    sessionStorage.setItem('preloadUrl', exampleUrl);
+
+    // Reload page to trigger OpenAPIUploader
+    window.location.reload();
+  };
+
   return (
     <main className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -11,6 +28,22 @@ export default function Home() {
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Automatically generate comprehensive TypeScript test cases from your OpenAPI specifications using AI
+          </p>
+        </div>
+
+        {/* Try Example Button */}
+        <div className="mb-8 text-center">
+          <button
+            onClick={handleLoadExample}
+            className="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-colors duration-200"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            Try Example Todo API
+          </button>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Load a pre-configured example to test the platform
           </p>
         </div>
 
