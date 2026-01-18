@@ -12,7 +12,7 @@ export async function generateStructuredTests(
 
   try {
     const { text } = await generateText({
-      model: anthropic('claude-3-5-sonnet-20240620'),
+      model: anthropic('claude-haiku-4-5-20251001'),
       prompt,
       temperature: 0.7,
     });
