@@ -1,8 +1,25 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import type { APITest, TestExecution, AssertionResult, Assertion } from '@/types';
+import { StoryTestRunner } from './runners/story-test-runner';
 
 export class TestRunner {
+  private storyTestRunner: StoryTestRunner;
+
+  constructor() {
+    this.storyTestRunner = new StoryTestRunner();
+  }
+
   async executeTest(test: APITest): Promise<TestExecution> {
+    // Detect if this is a story test (multi-step)
+    if (test.category === 'story' && test.steps && test.steps.length > 0) {
+      return this.storyTestRunner.executeStoryTest(test);
+    }
+
+    // Execute as contract test (single request)
+    return this.executeContractTest(test);
+  }
+
+  private async executeContractTest(test: APITest): Promise<TestExecution> {
     const startTime = Date.now();
 
     try {
