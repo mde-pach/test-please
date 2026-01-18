@@ -17,6 +17,7 @@ export interface Project {
   metadata?: {
     tags?: string[];
     favorite?: boolean;
+    customHeaders?: Record<string, string>;
   };
 }
 
