@@ -16,8 +16,9 @@ export async function generateTestCollection(
   // Generate tests for each endpoint
   for (const endpoint of endpoints) {
     try {
-      // Use AI to generate structured tests
-      const tests = await generateStructuredTests(endpoint, apiInfo, collectionId);
+      // Use AI to generate structured tests (both contract and story tests)
+      // Pass all endpoints to enable story test generation
+      const tests = await generateStructuredTests(endpoint, apiInfo, collectionId, endpoints);
 
       // Limit number of tests if specified
       const limitedTests = options?.maxTestsPerEndpoint
