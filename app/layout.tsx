@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'OpenAPI Test Generator',
-  description: 'Automatically generate TypeScript test cases from OpenAPI specifications',
+  title: 'Bruno Test Management Platform',
+  description: 'Manage and execute Bruno API tests with AI-powered generation',
 }
 
 export default function RootLayout({
@@ -12,9 +12,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body className="antialiased">
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+        <div className="min-h-screen bg-gray-950">
           {children}
         </div>
       </body>

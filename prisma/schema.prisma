@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Organization/Workspace level
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  collections Collection[]
+  testRuns    TestRun[]
+
+  @@index([createdAt])
+}
+
+// Bruno Collection (maps to a folder of .bru files)
+model Collection {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  projectId   String
+
+  // OpenAPI metadata (if generated from OpenAPI)
+  openapiSpec Json?    // Store original OpenAPI spec
+  apiTitle    String?
+  apiVersion  String?
+  baseUrl     String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tests       Test[]
+  testRuns    TestRun[]
+
+  @@index([projectId, createdAt])
+}
+
+// Individual .bru file (test)
+model Test {
+  id           String   @id @default(cuid())
+  name         String   // e.g., "Create User"
+  filename     String   // e.g., "create-user.bru"
+  collectionId String
+
+  // Test metadata
+  method       String   // GET, POST, etc.
+  url          String   // Endpoint path
+  description  String?
+
+  // Bruno file content
+  bruContent   String   @db.Text // Raw .bru file content
+
+  // Metadata for organization
+  tags         String[] @default([])
+  order        Int      @default(0) // For custom ordering
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  testResults  TestResult[]
+
+  @@index([collectionId, order])
+  @@index([collectionId, createdAt])
+}
+
+// Test run execution
+model TestRun {
+  id           String   @id @default(cuid())
+  projectId    String
+  collectionId String?  // Null if running multiple collections
+
+  // Execution metadata
+  status       RunStatus @default(PENDING)
+  triggeredBy  String?  // User/system identifier
+  startedAt    DateTime?
+  completedAt  DateTime?
+  duration     Int?     // milliseconds
+
+  // Configuration
+  environment  Json?    // Environment variables used
+  config       Json?    // Bruno run configuration
+
+  // Summary stats
+  totalTests   Int      @default(0)
+  passedTests  Int      @default(0)
+  failedTests  Int      @default(0)
+  skippedTests Int      @default(0)
+
+  // Error tracking
+  error        String?  @db.Text
+
+  createdAt    DateTime @default(now())
+
+  // Relations
+  project      Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  collection   Collection? @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  testResults  TestResult[]
+
+  @@index([projectId, createdAt])
+  @@index([status])
+}
+
+enum RunStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// Individual test result within a run
+model TestResult {
+  id         String   @id @default(cuid())
+  testRunId  String
+  testId     String
+
+  // Result data
+  status     TestStatus
+  duration   Int      // milliseconds
+
+  // Request/Response data
+  request    Json?    // Actual request sent
+  response   Json?    // Actual response received
+
+  // Assertions
+  assertions Json?    // Array of assertion results
+
+  // Error details
+  error      String?  @db.Text
+  stackTrace String?  @db.Text
+
+  createdAt  DateTime @default(now())
+
+  // Relations
+  testRun    TestRun  @relation(fields: [testRunId], references: [id], onDelete: Cascade)
+  test       Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@index([testRunId])
+  @@index([testId, createdAt])
+}
+
+enum TestStatus {
+  PASSED
+  FAILED
+  SKIPPED
+  ERROR
+}
