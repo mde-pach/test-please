@@ -10,7 +10,7 @@ export async function generateTestCasesForEndpoint(
 
   try {
     const { text } = await generateText({
-      model: anthropic('claude-3-5-sonnet-20241022'),
+      model: anthropic('claude-haiku-4-5-20251001'),
       prompt,
       temperature: 0.7,
     });

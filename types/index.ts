@@ -86,5 +86,9 @@ export interface GenerateTestsRequest {
 export interface GenerateTestsResponse {
   success: boolean;
   testFiles?: GeneratedTestFile[];
+  collection?: import('./test-format').TestCollection;
   error?: string;
 }
+
+// Re-export test format types
+export * from './test-format';
