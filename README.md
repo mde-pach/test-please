@@ -52,7 +52,7 @@ cd openapi-test-generator
 
 2. Install dependencies:
 ```bash
-npm install
+bun install
 ```
 
 3. Create a `.env` file in the root directory:
@@ -68,7 +68,7 @@ ANTHROPIC_API_KEY=sk-ant-your-api-key-here
 ### Running the Development Server
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
