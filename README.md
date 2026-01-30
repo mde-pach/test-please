@@ -1,13 +1,13 @@
 # OpenAPI Test Platform
 
-An AI-powered API testing platform that generates and executes comprehensive test suites from OpenAPI specifications. Tests are stored as structured data (Bruno-like format) and can be executed directly in the browser or exported as code.
+An AI-powered API testing platform that generates and executes comprehensive test suites from OpenAPI specifications. Tests are stored as structured data and can be executed directly in the browser or exported as code.
 
 ## Features
 
 ### Core Platform Features
 - **AI-Powered Test Generation**: Uses Claude AI (via Vercel AI SDK) to analyze OpenAPI specs and generate intelligent test cases
 - **In-Browser Test Execution**: Run HTTP tests directly in the interface with real-time results
-- **Structured Test Format**: Tests stored as JSON (similar to Bruno/Postman collections), ready for database storage
+- **Structured Test Format**: Tests stored as JSON, ready for database storage and execution
 - **Comprehensive Assertions**: Validate status codes, headers, JSON responses, response times, and schemas
 - **Dual Output**: Get both executable test collections AND exportable Vitest code files
 - **Multiple Input Methods**: Upload OpenAPI spec via file or URL
@@ -188,9 +188,10 @@ Tests are stored in a structured JSON format:
 - **UI**: React with Tailwind CSS
 - **AI**: Vercel AI SDK with Anthropic Claude
 - **OpenAPI Parsing**: @apidevtools/swagger-parser
-- **HTTP Client**: Axios
+- **HTTP Client**: Axios (for test execution)
 - **Test Execution**: Custom test runner with assertion engine
 - **Code Highlighting**: react-syntax-highlighter
+- **Test Engine**: Powered by @usebruno libraries
 
 ## How It Works
 
