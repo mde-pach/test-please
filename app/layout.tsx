@@ -3,8 +3,8 @@ import Link from 'next/link'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Bruno Test Platform',
-  description: 'Modern API testing platform powered by Bruno',
+  title: 'API Test Platform',
+  description: 'Modern API testing platform powered by AI',
 }
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                     </svg>
                     <span className="text-lg font-semibold text-gray-100">
-                      Bruno Test Platform
+                      API Test Platform
                     </span>
                   </Link>
                   <div className="flex space-x-1">
@@ -46,7 +46,7 @@ export default function RootLayout({
                 </div>
                 <div className="flex items-center space-x-3">
                   <span className="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded-md">
-                    Powered by Bruno
+                    Powered by AI
                   </span>
                 </div>
               </div>
